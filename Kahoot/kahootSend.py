@@ -21,4 +21,26 @@ class kahootSend:
         self.headers = headers
     def incrementCounters(self):
         self.subId = self.subId + 1
-    def connect(self, )
+    def test(self, testIn):
+        print(testIn)
+    def connect(self, data):
+        pin = str(self.pin)
+        while True:
+            self.subId = self.subId + 1
+            data = self.make_second_con_payload(self.subId)
+            url = "https://kahoot.it/cometd/"+pin+"/"+self.kahoot_session+"/connect"
+            try:
+                r = self.s.post(url, data=data, headers=self.headers, verify=self.verify)
+            if r.status_code != 200:
+                error(self.subId+100, str(r.status_code)+str(r.text),False)
+            except requests.exceptions.ConnectionError:
+                error(self.subId+200, "Conection error",False)
+                print("Connection Refused")
+            try:
+                response = json.loads(r.text)
+                if len(response) > 0:
+                    for i,x in enumerate(response):
+                        if x['channel'] != "/meta/connect":
+                            self.queue.append(x)
+            except:
+            error(12, "self.connect_while error" + str(r.text), False)
