@@ -1,10 +1,10 @@
-from Kahoot import kahootVariables, kahootQueue
+from kahoot import kahootVariables, kahootQueue, kahootSend
 
 class Kahoot:
     def __init__(self, pin):
         self.variables = kahootVariables.Variables(pin)
         self.queue = kahootQueue.kahootQueue()
-        self.send = kahootSend.kahootSend()
+        self.send = kahootSend.kahootSend(self.variables)
 
-class KahootError(Exception):
+class kahootError(Exception):
     pass

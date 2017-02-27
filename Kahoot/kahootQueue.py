@@ -1,5 +1,4 @@
 import queue, threading, time
-from Kahoot import queueWorker
 class kahootQueue:
     def __init__(self, noWorkers=5):
         self.num_worker_threads = noWorkers
@@ -13,13 +12,18 @@ class kahootQueue:
         self.q.put((workerType, item))
     def worker(self):
         while True:
-            workerType, item = self.q.get()
-            if item is None:
-                break
-            elif item is False:
+            if self.q.empty():
                 time.sleep(0.05)
-            work_on = queueWorker(workerType, item)
-            self.q.task_done()
+            else:
+                self.doWork()
+    def doWork(self):
+        workerType, item = self.q.get()
+        if item is None:
+            break
+        elif item is False:
+            time.sleep(0.05)
+        workerType(item)
+        self.q.task_done()
     def end(self):
         for i in range(self.num_worker_threads):
             self.q.put((None, None))
@@ -28,6 +32,3 @@ class kahootQueue:
     def map(self, sequence):
         for workerType, item in sequence:
             self.add(workerType, item)
-
-def queueWorker(workerType, item):
-    workerType(item)

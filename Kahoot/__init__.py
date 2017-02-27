@@ -1,1 +1,1 @@
-from Kahoot import Kahoot
+from kahoot import Kahoot
