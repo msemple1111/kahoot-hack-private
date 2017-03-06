@@ -15,12 +15,13 @@ class kahootQueue:
             if self.q.empty():
                 time.sleep(0.05)
             else:
-                self.doWork()
-    def doWork(self):
-        workerType, item = self.q.get()
-        if item is None:
-            break
-        elif item is False:
+                workerType, item = self.q.get()
+                if item is None:
+                    break
+                self.doWork(self.q.get())
+    def doWork(self, qItem):
+        workerType, item = qItem
+        if item is False:
             time.sleep(0.05)
         workerType(item)
         self.q.task_done()
@@ -30,5 +31,5 @@ class kahootQueue:
         for t in self.threads:
             t.join()
     def map(self, sequence):
-        for workerType, item in sequence:
+        for (workerType, item) in sequence:
             self.add(workerType, item)

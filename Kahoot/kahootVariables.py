@@ -1,4 +1,4 @@
-from kahoot import kahootError
+from kahoot import Kahoot
 import time
 class Variables:
     def __init__(self, pin):
@@ -8,6 +8,8 @@ class Variables:
             raise kahootError('pin is not an int value')
         self.verify = True
         self.kahootSession = ''
+        self.kahoot_raw_session = ''
+        self.clientid = ''
         self.name = ''
         self.domain = 'kahoot.it'
         self.httpSession = requests.Session()

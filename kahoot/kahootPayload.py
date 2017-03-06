@@ -4,11 +4,11 @@ class makePayloads:
         self.variables = variables
     def connection(self):
         subId, ackId = self.variables.increaseCounters()
-        data = [{"channel": "/meta/connect", "clientId": self.clientid, "connectionType": "long-polling", "ext": {"ack": ackId, "timesync": {"l": self.variables.l(), "o": self.variables.o(), "tc": self.variables.getTC()}}, "id": str(subId)}]
+        data = [{"channel": "/meta/connect", "clientId": self.variables.clientid, "connectionType": "long-polling", "ext": {"ack": ackId, "timesync": {"l": self.variables.l(), "o": self.variables.o(), "tc": self.variables.getTC()}}, "id": str(subId)}]
         return str(json.dumps(data))
-    def connection(self):
+    def firstConnection(self):
         ackId = self.variables.increaseAckId()
-        data = [{"advice": {"timeout": 0}, "channel": "/meta/connect", "clientId": self.clientid, "connectionType": "long-polling", "ext": {"ack": ackId, "timesync": {"l": self.variables.l(), "o": self.variables.o(), "tc": self.variables.getTC()}}, "id": "6"}]
+        data = [{"advice": {"timeout": 0}, "channel": "/meta/connect", "clientId": self.variables.clientid, "connectionType": "long-polling", "ext": {"ack": ackId, "timesync": {"l": self.variables.l(), "o": self.variables.o(), "tc": self.variables.getTC()}}, "id": "6"}]
         return str(json.dumps(data))
     def handshake(self):
         ackId = self.variables.increaseAckId()
@@ -16,5 +16,10 @@ class makePayloads:
         return str(json.dumps(data))
     def subscibe(self, chan):
         subId = self.variables.increaseSubId()
-        data = [{"channel": "/meta/"+str(chan), "clientId": self.clientid, "ext": {"timesync": {"l": get_l(), "o": get_o(), "tc": get_tc()}}, "id": str(subId), "subscription": "/service/subscribe"}]
+        data = [{"channel": "/meta/"+str(chan), "clientId": self.variables.clientid, "ext": {"timesync": {"l": get_l(), "o": get_o(), "tc": get_tc()}}, "id": str(subId), "subscription": "/service/subscribe"}]
+        return str(json.dumps(data))
+    def name(self, name):
+        name = str(name)
+        subId = str(self.variables.increaseSubId())
+        data = [{"channel": "/service/controller", "clientId": self.variables.clientid, "data": {"gameid": self.variables.pin, "host": self.variables.domain, "name": name, "type": "login"}, "id": subId }]
         return str(json.dumps(data))
