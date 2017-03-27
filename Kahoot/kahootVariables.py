@@ -1,5 +1,5 @@
 from kahoot import Kahoot
-import time
+import time, requests, base64, array
 class Variables:
     def __init__(self, pin):
         if isinstance(pin, int):
@@ -8,7 +8,7 @@ class Variables:
             raise kahootError('pin is not an int value')
         self.verify = True
         self.kahootSession = ''
-        self.kahoot_raw_session = ''
+        self.kahootChallenge = ''
         self.clientid = ''
         self.name = ''
         self.domain = 'kahoot.it'
@@ -31,6 +31,8 @@ class Variables:
         self.kahootSession = str(session)
     def setName(self, name):
         self.name = str(name)
+    def setChallenge(self, chal):
+        self.kahootChallenge = str(chal)
     def increaseSubId(self):
         self.subId = self.subId + 1
         return self.subId
@@ -41,11 +43,26 @@ class Variables:
         self.subId = self.subId + 1
         self.ackId = self.ackId + 1
         return (self.subId),(self.ackId)
+    def setclientId(self, clientId):
+        self.clientid =  str(clientId)
+    def processclientId(self,r):
+        self.setclientId(r[0]["clientId"])
     def getUrl(self, append=''):
         return 'https://' + self.domain + "/cometd/" + str(self.pin) + "/" + self.kahootSession+"/"+append
-    def o():
-      return int(14)
-    def l():
-      return int(0)
-    def getTC():
+    def getReserveUrl(self):
+        return 'https://' + self.domain + "/reserve/session/"+str(self.pin)+"/?"+str(self.getTC())
+    def getName(self):
+        return self.name
+    def o(self):
+      return int(44)
+    def l(self):
+      return int(33)
+    def getTC(self):
       return int(time.time() * 1000)
+    def kahootSessionShift(self, kahoot_raw_session):
+        kahoot_session_bytes = base64.b64decode(kahoot_raw_session)
+        challenge_bytes = str(self.kahootChallenge).encode("ASCII")
+        bytes_list = []
+        for i in range(len(kahoot_session_bytes)):
+            bytes_list.append(kahoot_session_bytes[i] ^ challenge_bytes[i%len(challenge_bytes)])
+        self.kahootSession = array.array('B',bytes_list).tostring().decode("ASCII")

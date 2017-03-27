@@ -18,9 +18,8 @@ class kahootQueue:
                 workerType, item = self.q.get()
                 if item is None:
                     break
-                self.doWork(self.q.get())
-    def doWork(self, qItem):
-        workerType, item = qItem
+                self.doWork(workerType, item)
+    def doWork(self, workerType, item):
         if item is False:
             time.sleep(0.05)
         workerType(item)

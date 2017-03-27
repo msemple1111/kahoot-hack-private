@@ -1,0 +1,2 @@
+class kahootError(Exception):
+    pass
