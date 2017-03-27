@@ -11,20 +11,20 @@ class makePayloads:
         return str(json.dumps(data))
     def connection(self):
         subId, ackId = self.variables.increaseCounters()
-        data = [{"channel": "/meta/connect", "clientId": self.variables.clientid, "connectionType": "long-polling", "ext": {"ack": ackId, "timesync": {"l": self.variables.l(), "o": self.variables.o(), "tc": self.variables.getTC()}}, "id": str(subId)}]
+        data = [{"channel": "/meta/connect", "clientId": self.variables.clientid, "connectionType": "long-polling", "ext": {"ack": ackId, "timesync": {"l": self.variables.getL(), "o": self.variables.getO(), "tc": self.variables.getTC()}}, "id": str(subId)}]
         return str(json.dumps(data))
     def firstConnection(self):
         ackId = self.variables.increaseAckId()
         print("clientid:",self.variables.clientid)
-        data = [{"advice": {"timeout": 0}, "channel": "/meta/connect", "clientId": self.variables.clientid, "connectionType": "long-polling", "ext": {"ack": ackId, "timesync": {"l": self.variables.l(), "o": self.variables.o(), "tc": self.variables.getTC()}}, "id": "6"}]
+        data = [{"advice": {"timeout": 0}, "channel": "/meta/connect", "clientId": self.variables.clientid, "connectionType": "long-polling", "ext": {"ack": ackId, "timesync": {"l": self.variables.getL(), "o": self.variables.getO(), "tc": self.variables.getTC()}}, "id": "6"}]
         return str(json.dumps(data))
     def handshake(self):
         ackId = self.variables.increaseAckId()
-        data = [{"advice": {"interval": 0, "timeout": 60000}, "channel": "/meta/handshake", "ext": {"ack": ackId, "timesync": {"l": self.variables.l(), "o": self.variables.o(), "tc": self.variables.getTC()}}, "id": "2", "minimumVersion" : "1.0", "supportedConnectionTypes": ["long-polling"], "version": "1.0"}]
+        data = [{"advice": {"interval": 0, "timeout": 60000}, "channel": "/meta/handshake", "ext": {"ack": ackId, "timesync": {"l": self.variables.getL(), "o": self.variables.getO(), "tc": self.variables.getTC()}}, "id": "2", "minimumVersion" : "1.0", "supportedConnectionTypes": ["long-polling"], "version": "1.0"}]
         return str(json.dumps(data))
-    def subscribe(self, chan):
+    def subscribe(self, sub, chan):
         subId = self.variables.increaseSubId()
-        data = [{"channel": "/meta/"+str(chan), "clientId": self.variables.clientid, "ext": {"timesync": {"l": self.variables.l(), "o": self.variables.o(), "tc": self.variables.getTC()}}, "id": str(subId), "subscription": "/service/subscribe"}]
+        data = [{"channel": "/meta/"+str(chan), "clientId": self.variables.clientid, "ext": {"timesync": {"l": self.variables.getL(), "o": self.variables.getO(), "tc": self.variables.getTC()}}, "id": str(subId), "subscription": "/service/" + str(sub)}]
         return str(json.dumps(data))
     def name(self):
         name = self.variables.getName()

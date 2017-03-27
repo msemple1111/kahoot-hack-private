@@ -1,10 +1,11 @@
+from kahoot import kahootError
 import time, requests, base64, array
 class Variables:
     def __init__(self, pin):
         if isinstance(pin, int):
             self.pin = pin
         else:
-            raise kahootError('pin is not an int value')
+            raise kahootError.kahootError('pin is not an int value')
         self.verify = True
         self.kahootSession = ''
         self.kahootChallenge = ''
@@ -20,8 +21,12 @@ class Variables:
             'DNT': '1',
             'Referer':'https://kahoot.it/'
             }
-        self.subId = 12
+        self.subId = 1
         self.ackId = 1
+        self.o = 0
+        self.l = 0
+        self.tc = 0
+        self.ts = 0
     def __str__(self):
         return ''.join('{}: {}\n'.format(key, val) for key, val in vars(self).items())
     def setVerify(self, verify):
@@ -43,7 +48,7 @@ class Variables:
         self.ackId = self.ackId + 1
         return (self.subId),(self.ackId)
     def setclientId(self, clientId):
-        self.clientid =  str(clientId)
+        self.clientid = str(clientId)
     def processclientId(self,r):
         self.setclientId(r[0]["clientId"])
     def getUrl(self, append=''):
@@ -52,12 +57,18 @@ class Variables:
         return 'https://' + self.domain + "/reserve/session/"+str(self.pin)+"/?"+str(self.getTC())
     def getName(self):
         return self.name
-    def o(self):
-      return int(44)
-    def l(self):
-      return int(33)
+    def getO(self):
+        return int(self.o)
+    def getL(self):
+        return int(self.l)
+    def setPrevTcl(self, tcl):
+        self.p = tcl['p']
+        self.ts = tcl['ts']
+        self.tc = tcl['tc']
+        self.l = (self.getTC()-self.tc-self.p)/2
+        self.o = self.ts-self.tc-self.l
     def getTC(self):
-      return int(time.time() * 1000)
+        return int(time.time() * 1000)
     def kahootSessionShift(self, kahoot_raw_session):
         kahoot_session_bytes = base64.b64decode(kahoot_raw_session)
         challenge_bytes = str(self.kahootChallenge).encode("ASCII")

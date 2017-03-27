@@ -5,11 +5,12 @@ def main(a):
     try:
         k = Kahoot.Kahoot(a)
         k.connect('mike')
+        k.end()
     except Exception as e:
         print(e)
-        k.end()
         raise
+    k.end()
 
 if __name__ == '__main__':
-    pin = sys.argv[1]
+    pin = int(sys.argv[1])
     main(pin)

@@ -24,13 +24,17 @@ class kahootSend:
                 if "successful" in response[x]:
                     if response[x]["successful"] != True:
                         raise kahootError.kahootError(self.variables.domain+' returned an unsuccessful response')
+                if ('ext' in response[x]) and ('timesync' in response[x]['ext']):
+                    self.variables.setPrevTcl(response[x]['ext']['timesync'])
             if successful_flag:
                 return response
         except:
             raise kahootError.kahootError('The response from '+ self.variables.domain +' was unparseable')
-    def checkResponse(self, r, statusCodePass=200):
-        if r.status_code != statusCodePass:
+    def checkResponse(self, r, statusCodePass=200, statusCodeFail=0):
+        if (r.status_code != statusCodePass) and (r.status_code != statusCodeFail):
             raise kahootError.kahootError(self.variables.domain+' returned http error code ' + str(r.status_code) )
+        elif r.status_code == statusCodeFail:
+            pass
         return r
     def send(self, dataIn, urlExt=''):
         data = str(dataIn)
@@ -63,13 +67,15 @@ class kahootSend:
         data = self.payloads.handshake()
         r = self.send(data, 'handshake')
         return self.processResponse(r)
-    def subscribeOnce(self, text):
-        r = self.send(self.payloads.subscribe(text), 'subscribe')
+    def subscribeOnce(self, sub, channel):
+        r = self.send(self.payloads.subscribe(sub, channel), 'subscribe')
         return self.processResponse(r)
     def subscribe(self):
-        subscribe_text = ["controller", "player", "status"]
+        subscribe_text = ["subscribe", "unsubscribe", "subscribe"]
+        subscribe_chan = ["controller", "player", "status"]
         for x in subscribe_text:
-            self.subscribeOnce(x)
+            for y in subscribe_chan:
+                self.subscribeOnce(y, x)
     def sessionStart(self):
         url = self.variables.getUrl()
         r = self.get(url)
@@ -77,7 +83,7 @@ class kahootSend:
     def testSession(self):
         url = self.variables.getReserveUrl()
         r = self.get(url)
-        return self.checkResponse(r)
+        return self.checkResponse(r, statusCodeFail=404)
     def solveKahootChallenge(self, dataChallenge):
         htmlDataChallenge = urllib.parse.quote_plus(str(dataChallenge))
         url = "http://safeval.pw/eval?code="+htmlDataChallenge
