@@ -1,4 +1,5 @@
 from kahoot import Kahoot
+import sys
 
 def main(a):
     try:
@@ -9,6 +10,6 @@ def main(a):
         k.end()
         raise
 
-pin = 2165544
-
-main(pin)
+if __name__ == '__main__':
+    pin = sys.argv[1]
+    main(pin)

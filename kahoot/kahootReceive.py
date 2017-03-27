@@ -12,7 +12,7 @@ class receive:
             if len(response) > 0:
                 for i, x in enumerate(response):
                     if x['channel'] != "/meta/connect":
-                        self.queue.add(x)
+                        self.queue.add(x) #Each item needs a method to run before being added to the queue
         except:
             raise KahootError('')
     def testSession(self, r):

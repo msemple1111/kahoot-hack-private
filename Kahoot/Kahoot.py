@@ -5,7 +5,7 @@ class Kahoot:
         self.variables = kahootVariables.Variables(pin)
         self.queue = kahootQueue.kahootQueue()
         self.send = kahootSend.kahootSend(self.variables)
-        self.receive = kahootReceive.receive(self)
+        self.process = kahootReceive.receive(self)
     def setQueue(self, queuePointer):
         self.queue.end()
         self.queue = queuePointer
@@ -13,7 +13,7 @@ class Kahoot:
         self.queue.end()
     def testSession(self):
         r = self.send.testSession()
-        return self.receive.testSession(r)
+        return self.process.testSession(r)
     def setName(self, name):
         self.variables.setName(name)
         self.send.sendName()

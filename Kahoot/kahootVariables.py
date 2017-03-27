@@ -1,4 +1,3 @@
-from kahoot import Kahoot
 import time, requests, base64, array
 class Variables:
     def __init__(self, pin):
