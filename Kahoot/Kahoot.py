@@ -1,14 +1,16 @@
 from kahoot import kahootVariables, kahootQueue, kahootSend, kahootReceive
 
 class Kahoot:
-    def __init__(self, pin):
-        self.variables = kahootVariables.Variables(pin)
-        self.queue = kahootQueue.kahootQueue()
-        self.send = kahootSend.kahootSend(self.variables)
+    def __init__(self, pin, **kwargs):
+        self.queue = kwargs['q'] if 'q' in kwargs else kahootQueue.kahootQueue()
+        self.variables = kahootVariables.Variables(pin, **kwargs)
+        self.send = kahootSend.kahootSend(self)
         self.process = kahootReceive.receive(self)
     def setQueue(self, queuePointer):
         self.queue.end()
         self.queue = queuePointer
+    def setVerify(self, verify):
+        self.variables.verify = verify
     def end(self):
         self.queue.end()
     def testSession(self):
@@ -19,17 +21,27 @@ class Kahoot:
         self.send.sendName()
     def enterSession(self):
         self.send.sessionStart()
-        self.variables.processclientId(self.send.handshake())
+    def subscribe(self):
         self.send.subscribe()
-    def connect(self, name):
+    def getClientID(self):
+        r = self.send.handshake()
+        self.process.processclientId(r)
+    def connectTo(self, name):
         try:
             if self.testSession():
                 self.enterSession()
+                self.getClientID()
+                self.subscribe()
                 self.setName(name)
-        except Exception as e:
-            print(e)
-            self.end()
-            raise
+                self.send.firstConnect()
+        except:
+            self.variables.setFailed()
+            if self.variables.debug:
+                raise
+    def connect(self, name):
+        self.queue.add(self.connectTo,name)
+    def checkConnected(self):
+        return (self.variables.connectedClient)
 
 
 class kahootError(Exception):

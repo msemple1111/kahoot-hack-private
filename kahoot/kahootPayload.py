@@ -7,7 +7,7 @@ class makePayloads:
         subId = str(self.variables.increaseSubId())
         innerdata = {"choice": choice, "meta": {"lag": 13, "device": {"userAgent": "your_mu", "screen": {"width": 1920, "height": 1080}}}}
         innerdata = json.dumps(innerdata)
-        data = [{"channel": "/service/controller", "clientId": self.variables.clientid, "data": {"content": innerdata, "gameid": self.variables.pin, "host": "kahoot.it", "id": 6, "type": "message"}, "id": subId}]
+        data = [{"channel": "/service/controller", "clientId": self.variables.clientid, "data": {"content": innerdata, "gameid": self.variables.pin, "host": "kahoot.it", "id": 6, "type": "message"}, "id": str(subId)}]
         return str(json.dumps(data))
     def connection(self):
         subId, ackId = self.variables.increaseCounters()
@@ -15,7 +15,6 @@ class makePayloads:
         return str(json.dumps(data))
     def firstConnection(self):
         ackId = self.variables.increaseAckId()
-        print("clientid:",self.variables.clientid)
         data = [{"advice": {"timeout": 0}, "channel": "/meta/connect", "clientId": self.variables.clientid, "connectionType": "long-polling", "ext": {"ack": ackId, "timesync": {"l": self.variables.getL(), "o": self.variables.getO(), "tc": self.variables.getTC()}}, "id": "6"}]
         return str(json.dumps(data))
     def handshake(self):

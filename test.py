@@ -14,17 +14,19 @@ def main():
     finally:
         kahoot.queue.end()
     print(kahoot.verify)
+
 def testQueue():
     try:
         queue = kahootQueue.kahootQueue(2)
-        queue.map(returnQueue())
+        q = returnQueue()
+        queue.map(q)
     finally:
         queue.end()
 
 def returnQueue():
     q = []
-    for x in range(10000):
-        q.append((print, str(x)))
+    for x in range(1000):
+        q.append((print, [str(x)], {}))
     return q
 
-main()
+testQueue()
