@@ -40,6 +40,8 @@ class Kahoot:
                 raise
     def connect(self, name):
         self.queue.add(self.connectTo,name)
+    def runClient(self):
+        self.variables.setIsUser(True)
     def checkConnected(self):
         return (self.variables.connectedClient)
 

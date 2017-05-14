@@ -1,10 +1,12 @@
 from kahoot import Kahoot
+import sys
 def main():
     verif = False
     debuga = False
-    pin = 1291508
-    name = 'mike5'
+    pin = int(sys.argv[1])
+    name = sys.argv[2]
     k = Kahoot.Kahoot(pin, verify=verif, debug=debuga)
     k.connect(name)
+    k.runClient()
 
 main()

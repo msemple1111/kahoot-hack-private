@@ -10,7 +10,7 @@ class receive:
         if len(response) > 0:
             for i, x in enumerate(response):
                 if x['channel'] != "/meta/connect":
-                    self.addTaskToQueue(x)
+                    self.runOrDrop(x)
     def testSession(self, r):
         try:
             if (r.status_code == 404):
@@ -39,6 +39,9 @@ class receive:
             bytes_list.append(kahoot_session_bytes[i] ^ challenge_bytes[i%challenge_bytes_len])
         kahootSession = array.array('B',bytes_list).tostring().decode("ASCII")
         self.variables.setKahootSession(kahootSession)
+    def runOrDrop(self, *args):
+        if self.variables.isUser:
+            self.addTaskToQueue(*args)
     def addTaskToQueue(self, x):
         if x['channel'] == "/service/player":
             data = x['data']
@@ -47,23 +50,21 @@ class receive:
             method = id_methods.get(serviceID, self.id_error)
             dataContent = json.loads(data['content'])
             if self.variables.debug:
-                print("id:",serviceID, "\ndata:",dataContent)
+                print("id:", serviceID, "\ndata:", dataContent)
             self.queue.add(method, dataContent)
         else:
             print(x['channel'])
     def id_error(self, dataContent):
         if self.variables.debug:
-            print("id: ",data['id'])
-        raise kahootError.kahootError('cannot find ID from ' + self.variables.domain)
+            print("id: ",dataContent['id'])
+            raise kahootError.kahootError('cannot find ID from ' + self.variables.domain)
     def do_id_1(self, dataContent):
         self.variables.setCurrentQuestion(dataContent['questionIndex'])
         print("Question number: ", self.variables.getCurrentQuestionNumber())
     def do_id_2(self, dataContent):
         options = []
         self.variables.setCurrentQuestion(dataContent['questionIndex'])
-        for i, x in enumerate(dataContent['answerMap']):
-          options.append(x)
-        answer = self.ask_question(sorted(options), dataContent['questionIndex']+1)
+        answer = self.ask_question(dataContent['answerMap'], dataContent['questionIndex']+1)
         self.send.sendAnswer(answer)
     def do_id_3(self, dataContent):
         print("End of quiz! \nYou came", self.ordinal(dataContent['rank']), "out of", dataContent['playerCount'],"players")
@@ -141,22 +142,33 @@ class receive:
     #         self.twoFactorStarted = True
     #         self.get_two_factor()
     #         self.send(self.make_two_factor_payload(self.twoFactor))
-    def ask_question(self, options, questionNo):
+    def ask_question(self, ansMap, qNo):
+        questionOptions = list(range(len(ansMap)))
+        convOpts = {'r':0, 'b':1, 'y':2, 'g':3}
+        print("please enter red, blue, yellow or green")
+        print("enter as [r] [b] [y] or [g] and press [enter]")
+        ansIn = input()
+        ans = int(convOpts.get(ansIn, -1))
+        if ans == -1:
+            print("you entered an incorect answer")
+        return ans
+
+
+    def ask_question2(self, options, questionNo):
         options = list(options)
         questionNo = int(questionNo)
         print("List of options are:")
         for option in options:
-          print(int(option)+1)
-        while self.variables.getCurrentQuestionNumber() == questionNo:
-          try:
+            print(int(option)+1)
+        try:
             answer = int(input("Enter your answer: ") - 1)
-          except:
+        except:
             answer = -1
-            print("your answer is not is the list of options 1")
-          if str(answer) in options:
+        print("your entered an invalid input")
+        if str(answer) in options:
             questionNo = questionNo - 1
             return int(answer)
-          else:
+        else:
             print("your answer is not is the list of options")
     def ordinal(self, n):
         if 10 <= n % 100 < 20:

@@ -8,7 +8,8 @@ class Variables:
             raise kahootError.kahootError('pin is not an int value')
         self.debug = bool(kwargs['debug']) if 'debug' in kwargs else False
         self.verify = bool(kwargs['verify']) if 'verify' in kwargs else True
-        self.timeoutTime = float(kwargs['timeout']) if 'timeout' in kwargs else 5
+        self.timeoutTime = float(kwargs['timeout']) if 'timeout' in kwargs else 5.0
+        self.isUser = bool(kwargs['isUser']) if 'isUser' in kwargs else True
         self.name = ''
         self.domain = 'kahoot.it'
         self.httpSession = requests.Session()
@@ -36,6 +37,8 @@ class Variables:
         return ''.join('{}: {}\n'.format(key, val) for key, val in vars(self).items())
     def setVerify(self, verify):
         self.verify = bool(verify)
+    def setIsUser(self, isUser):
+        self.isUser = bool(isUser)
     def setKahootSession(self, session):
         self.kahootSession = str(session)
     def setPrevTcl(self, tcl):

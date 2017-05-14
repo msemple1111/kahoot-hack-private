@@ -16,7 +16,7 @@ def main1(a):
     k.end()
 
 class clients:
-    def __init__(self, pin, num, pre='mike', **kwargs):
+    def __init__(self, pin, num, pre='play', **kwargs):
         self.preName = str(pre) if 'post' not in kwargs else (str(pre)+str(kwargs['post']))
         self.num = num
         self.numClient = 0 if 'startNumber' not in kwargs else kwargs['startNumber']
