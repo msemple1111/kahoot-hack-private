@@ -1,12 +1,12 @@
 from kahoot import Kahoot
 import sys
 def main():
-    verif = False
-    debuga = False
     pin = int(sys.argv[1])
     name = sys.argv[2]
-    k = Kahoot.Kahoot(pin, verify=verif, debug=debuga)
+    k = Kahoot.Kahoot(pin, verify=False)
     k.connect(name)
     k.runClient()
-
-main()
+try:
+    main()
+except:
+    print('\nEnd')

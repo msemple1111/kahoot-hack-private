@@ -59,8 +59,8 @@ class receive:
             print("id: ",dataContent['id'])
             raise kahootError.kahootError('cannot find ID from ' + self.variables.domain)
     def do_id_1(self, dataContent):
-        self.variables.setCurrentQuestion(dataContent['questionIndex'])
-        print("Question number: ", self.variables.getCurrentQuestionNumber())
+        self.variables.setCurrentQuestion(dataContent['questionIndex']-1)
+        print("\nQuestion number: ", self.variables.getCurrentQuestionNumber())
     def do_id_2(self, dataContent):
         options = []
         self.variables.setCurrentQuestion(dataContent['questionIndex'])
@@ -71,7 +71,7 @@ class receive:
         print("You got", dataContent['totalScore'], "points")
         print("You got", dataContent['correctCount'], "Questions correct and", dataContent['incorrectCount'], "Questions incorect and had", dataContent['unansweredCount'], "Questions unanswered")
     def do_id_4(self, dataContent):
-        self.variables.setCurrentQuestion(dataContent['questionNumber'] -1)
+        self.variables.setCurrentQuestion(dataContent['questionNumber']-1)
         print("End of question", self.variables.getCurrentQuestionNumber())
     def do_id_5(self, dataContent):
         print('end')
