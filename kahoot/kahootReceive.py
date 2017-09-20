@@ -1,4 +1,4 @@
-from kahoot import Kahoot, kahootError
+from kahoot import kahootError
 import json, base64, array
 class receive:
     def __init__(self, kahootPointer):
@@ -54,6 +54,17 @@ class receive:
             self.queue.add(method, dataContent)
         else:
             print(x['channel'])
+    def checkConnected(self, response):
+        active = False
+        login = False
+        for x in range(len(response)):
+            if 'data' in response[x]:
+                if ('status' in response[x]['data']) and (response[x]['data']['status'] == "ACTIVE"):
+                    active = True
+                elif ('type' in response[x]['data']) and (response[x]['data']['type'] == "loginResponse"):
+                    login = True
+        if active and login:
+            self.variables.setConnected()
     def id_error(self, dataContent):
         if self.variables.debug:
             print("id: ",dataContent['id'])
@@ -152,24 +163,6 @@ class receive:
         if ans == -1:
             print("you entered an incorect answer")
         return ans
-
-
-    def ask_question2(self, options, questionNo):
-        options = list(options)
-        questionNo = int(questionNo)
-        print("List of options are:")
-        for option in options:
-            print(int(option)+1)
-        try:
-            answer = int(input("Enter your answer: ") - 1)
-        except:
-            answer = -1
-        print("your entered an invalid input")
-        if str(answer) in options:
-            questionNo = questionNo - 1
-            return int(answer)
-        else:
-            print("your answer is not is the list of options")
     def ordinal(self, n):
         if 10 <= n % 100 < 20:
             return str(n) + 'th'
