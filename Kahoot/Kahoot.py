@@ -33,7 +33,7 @@ class Kahoot:
                 self.getClientID()
                 self.subscribe()
                 self.setName(name)
-                self.send.firstConnect()
+                self.queue.add(self.send.firstConnect)
         except:
             self.variables.setFailed()
             if self.variables.debug:

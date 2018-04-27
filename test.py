@@ -1,4 +1,4 @@
-from kahoot import kahootQueue, Kahoot
+from kahoot import kahootQueue, Kahoot, kahootReceive
 import timeit
 def main():
     #kh = Kahoot.Kahoot(55555)
@@ -29,4 +29,11 @@ def returnQueue():
         q.append((print, [str(x)], {}))
     return q
 
-testQueue()
+def checkCompute():
+    k = Kahoot.Kahoot(56)
+    k.end()
+    chal = "decode.call(this, 'IPou1KzjkDHK8Iv6ZOda0Ok15N1hXeKWHWUHvEq2tljWvoqWxj6YLtHrbiQOPllbTjpytp4irXyjqDaO8NTlflOvVd0MXaUwEcsX'); function decode(message) {var offset = (74 + 6 * 7 + (55 + 74 * 14 * 9)); if (this.angular.isDate(offset)) {console.log(\"Offset derived as: {\", offset, \"}\");}return _.replace(message, /./g, function(char, position) {return String.fromCharCode((((char.charCodeAt(0) * position) + offset) % 77) + 48);});}"
+    k.variables.kahootChallenge = k.process.computeChallenge2(str(chal))
+    session = "eyhcR0AGWx9hdQAKAQVYSVNeBHFbRkQcSQMWCCt5by4nb0cHNmEOUWRcCkZeWw4xD1ksJQMFWA8/CnwTW0cjY1wMfD1fVm4MEFFnPUN9OXQzfV5Yajw+VWsTMnthYVIM"
+    k.process.solveChallenge(session)
+    return k.variables.kahootSession

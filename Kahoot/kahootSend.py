@@ -11,7 +11,7 @@ class kahootSend:
         self.variables = self.kahoot.variables
         self.headers = self.variables.headers
         self.payloads = kahootPayload.makePayloads(self.variables)
-        if not self.variables.debug and not self.variables.verify:
+        if (self.variables.debugLevel < 5) and not self.variables.verify:
             requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
     def setHeaders(self, headers):
         self.headers = headers
@@ -28,7 +28,7 @@ class kahootSend:
                     self.variables.setPrevTcl(x['ext']['timesync'])
             return response
         except Exception as e:
-            if self.variables.debug:
+            if self.variables.debugLevel > 2:
                 print(e)
                 print(r.text)
             raise kahootError.kahootError('The response from '+ r.url +' was unparseable')
@@ -87,11 +87,11 @@ class kahootSend:
         data = self.payloads.handshake()
         r = self.send(data, 'handshake')
         return self.processResponse(r)
-    def subscribeOnce(self, sub, channel):
+    def subscribeOnce(self, sub, channel): #sub and channel to be swapped (wrong)
         r = self.send(self.payloads.subscribe(sub, channel), 'subscribe')
         return self.processResponse(r)
     def subscribe(self):
-        subscribe_text = ["subscribe", "unsubscribe", "subscribe"]
+        subscribe_text = ["subscribe"] #["subscribe", "unsubscribe", "subscribe"]
         subscribe_chan = ["controller", "player", "status"]
         for x in subscribe_text:
             for y in subscribe_chan:
@@ -108,13 +108,14 @@ class kahootSend:
         htmlDataChallenge = urllib.parse.quote_plus(str(dataChallenge))
         url = "http://safeval.pw/eval?code="+htmlDataChallenge
         attempt = 1
+        maxAttemps = 5
         r = self.get(url)
-        while (r == None) and (attempt < 5):
+        while (r == None) and (attempt < maxAttemps):
             attempt = attempt + 1
             r = self.get(url)
             time.sleep(self.variables.timeoutTime)
         if r == None:
-            if self.variables.debug:
+            if self.variables.debugLevel >= 1:
                 print("name:",self.variables.name ,"unsucsessful:",url)
             raise('Tried to solve the chalenge but unsucsessful after '+str(attempt)+' attemps')
         return self.checkResponse(r)

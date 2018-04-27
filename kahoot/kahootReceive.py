@@ -17,10 +17,12 @@ class receive:
                 return False
             data = json.loads(r.text)
             if data['twoFactorAuth'] == False:
-                chal_r = self.send.solveKahootChallenge(data['challenge'])
+                chal_r = self.computeChallenge(data['challenge'])
+                if chal_r == False:
+                    chal_r = self.send.solveKahootChallenge(data['challenge'])
                 if self.variables.debug:
-                    print(chal_r)
-                self.variables.setChallenge(chal_r.text)
+                    print("challenge:", chal_r)
+                self.variables.setChallenge(chal_r)
                 self.solveChallenge(r.headers['x-kahoot-session-token'])
                 return True
             else:
@@ -170,6 +172,49 @@ class receive:
             return int(answer)
         else:
             print("your answer is not is the list of options")
+
+    def computeChallenge(self, chalString):
+        challenges = [self.computeChallenge2, self.computeChallenge1]
+        for x in challenges:
+            result = x(chalString)
+            if not result:
+                return False
+            else:
+                return result
+
+    def splitChallenge1(self, string):
+        decodeValueA = string.split("decode('")
+        decodeValueB = decodeValueA[1].split("'); function decode(message) {var offset = ")
+        decodeValueC = decodeValueB[1].split('; console.log("Offset derived as:", offset);')
+        return (decodeValueB[0], decodeValueC[0])
+    def computeChallenge1(self, chalString):
+        if "console.log(\"Offset derived as:\", offset); return _.replace(message, /./g, function(char, position) {return String.fromCharCode((((char.charCodeAt(0) * position) + offset) % 77) + 48);});}" not in chalString:
+            return False
+        chal = self.splitChallenge1(chalString) #[0] = decode(), [1] = ofset
+        offset = eval(chal[1])
+        new = []
+        for i, j in enumerate(chal[0]):
+            n = (((ord(j) * i) + offset) % 77) + 48
+            new.append(chr(n))
+        return ''.join(new)
+
+    def computeChallenge2(self, chalString):
+        if "{console.log(\"Offset derived as: {\", offset, \"}\");}return _.replace(message, /./g, function(char, position) {return String.fromCharCode((((char.charCodeAt(0) * position) + offset) % 77) + 48);});}" not in chalString:
+            return False
+        chal = self.splitChallenge2(chalString) #[0] = decode(), [1] = ofset
+        offset = eval(chal[1])
+        new = []
+        for i, j in enumerate(chal[0]):
+            n = (((ord(j) * i) + offset) % 77) + 48
+            new.append(chr(n))
+        return ''.join(new)
+
+    def splitChallenge2(self, string):
+        decodeValuePreLetters = string.split("decode.call(this, '")
+        decodeValueLetters = decodeValuePreLetters[1].split("'); function decode(message) {var offset = ")
+        decodeValueNumbers = decodeValueLetters[1].split('; if (this.angular')
+        return (decodeValueLetters[0], decodeValueNumbers[0])
+
     def ordinal(self, n):
         if 10 <= n % 100 < 20:
             return str(n) + 'th'
