@@ -1,5 +1,5 @@
 import requests, json, urllib.parse, time
-from kahoot import kahootReceive, Kahoot, kahootPayload, kahootError
+from kahoot import kahootReceive, kahootPayload, kahootError
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 # import os, sys, inspect
 # cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"lib")))
@@ -32,17 +32,6 @@ class kahootSend:
                 print(e)
                 print(r.text)
             raise kahootError.kahootError('The response from '+ r.url +' was unparseable')
-    def checkConnected(self, response):
-        active = False
-        login = False
-        for x in range(len(response)):
-            if 'data' in response[x]:
-                if ('status' in response[x]['data']) and (response[x]['data']['status'] == "ACTIVE"):
-                    active = True
-                elif ('type' in response[x]['data']) and (response[x]['data']['type'] == "loginResponse"):
-                    login = True
-        if active and login:
-            self.variables.setConnected()
     def checkResponse(self, r, statusCodePass=200, statusCodeFail=0):
         if r == None:
             raise kahootError.kahootError(self.variables.domain+' returned nothing' )
@@ -122,7 +111,7 @@ class kahootSend:
     def sendName(self):
         r = self.send(self.payloads.name())
         data = self.processResponse(r)
-        self.checkConnected(data)
+        self.kahoot.process.checkConnected(data)
         return data
     def sendAnswer(self, choice):
         payload = self.payloads.answer(choice)

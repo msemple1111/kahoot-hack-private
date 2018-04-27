@@ -1,4 +1,4 @@
-from kahoot import Kahoot, kahootError
+from kahoot import kahootError
 import json, base64, array
 class receive:
     def __init__(self, kahootPointer):
@@ -56,13 +56,24 @@ class receive:
             self.queue.add(method, dataContent)
         else:
             print(x['channel'])
+    def checkConnected(self, response):
+        active = False
+        login = False
+        for x in range(len(response)):
+            if 'data' in response[x]:
+                if ('status' in response[x]['data']) and (response[x]['data']['status'] == "ACTIVE"):
+                    active = True
+                elif ('type' in response[x]['data']) and (response[x]['data']['type'] == "loginResponse"):
+                    login = True
+        if active and login:
+            self.variables.setConnected()
     def id_error(self, dataContent):
         if self.variables.debug:
             print("id: ",dataContent['id'])
             raise kahootError.kahootError('cannot find ID from ' + self.variables.domain)
     def do_id_1(self, dataContent):
-        self.variables.setCurrentQuestion(dataContent['questionIndex'])
-        print("Question number: ", self.variables.getCurrentQuestionNumber())
+        self.variables.setCurrentQuestion(dataContent['questionIndex']-1)
+        print("\nQuestion number: ", self.variables.getCurrentQuestionNumber())
     def do_id_2(self, dataContent):
         options = []
         self.variables.setCurrentQuestion(dataContent['questionIndex'])
@@ -73,7 +84,7 @@ class receive:
         print("You got", dataContent['totalScore'], "points")
         print("You got", dataContent['correctCount'], "Questions correct and", dataContent['incorrectCount'], "Questions incorect and had", dataContent['unansweredCount'], "Questions unanswered")
     def do_id_4(self, dataContent):
-        self.variables.setCurrentQuestion(dataContent['questionNumber'] -1)
+        self.variables.setCurrentQuestion(dataContent['questionNumber']-1)
         print("End of question", self.variables.getCurrentQuestionNumber())
     def do_id_5(self, dataContent):
         print('end')
