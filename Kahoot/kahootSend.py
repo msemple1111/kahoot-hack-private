@@ -76,15 +76,15 @@ class kahootSend:
         data = self.payloads.handshake()
         r = self.send(data, 'handshake')
         return self.processResponse(r)
-    def subscribeOnce(self, sub, channel):
-        r = self.send(self.payloads.subscribe(sub, channel), 'subscribe')
+    def subscribeOnce(self, service, channel):
+        r = self.send(self.payloads.subscribe(service, channel), 'subscribe')
         return self.processResponse(r)
     def subscribe(self):
-        subscribe_text = ["subscribe", "unsubscribe", "subscribe"]
-        subscribe_chan = ["controller", "player", "status"]
-        for x in subscribe_text:
-            for y in subscribe_chan:
-                self.subscribeOnce(y, x)
+        channels_to_sub = ["subscribe", "unsubscribe", "subscribe"]
+        services_to_sub = ["controller", "player", "status"]
+        for channel in channels_to_sub:
+            for service in services_to_sub:
+                self.subscribeOnce(service, channel)
     def sessionStart(self):
         url = self.variables.getUrl()
         r = self.get(url)

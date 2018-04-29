@@ -21,9 +21,9 @@ class makePayloads:
         ackId = self.variables.increaseAckId()
         data = [{"advice": {"interval": 0, "timeout": 60000}, "channel": "/meta/handshake", "ext": {"ack": ackId, "timesync": {"l": self.variables.getL(), "o": self.variables.getO(), "tc": self.variables.getTC()}}, "id": "2", "minimumVersion" : "1.0", "supportedConnectionTypes": ["long-polling"], "version": "1.0"}]
         return str(json.dumps(data))
-    def subscribe(self, sub, chan):
+    def subscribe(self, service, chan):
         subId = self.variables.increaseSubId()
-        data = [{"channel": "/meta/"+str(chan), "clientId": self.variables.clientid, "ext": {"timesync": {"l": self.variables.getL(), "o": self.variables.getO(), "tc": self.variables.getTC()}}, "id": str(subId), "subscription": "/service/" + str(sub)}]
+        data = [{"channel": "/meta/"+str(chan), "clientId": self.variables.clientid, "ext": {"timesync": {"l": self.variables.getL(), "o": self.variables.getO(), "tc": self.variables.getTC()}}, "id": str(subId), "subscription": "/service/" + str(service)}]
         return str(json.dumps(data))
     def name(self):
         name = self.variables.getName()
