@@ -6,9 +6,10 @@ class Variables:
             self.pin = pin
         else:
             raise kahootError.kahootError('pin is not an int value')
-        self.debug = bool(kwargs['debug']) if 'debug' in kwargs else False
+        self.debugLevel = int(kwargs['debug']) if 'debug' in kwargs else 0 #1 = some, 2 = most
+        self.debug = bool(self.debugLevel != 0)
         self.verify = bool(kwargs['verify']) if 'verify' in kwargs else True
-        self.timeoutTime = float(kwargs['timeout']) if 'timeout' in kwargs else 5.0
+        self.timeoutTime = float(kwargs['timeout']) if 'timeout' in kwargs else 2.0
         self.isUser = bool(kwargs['isUser']) if 'isUser' in kwargs else True
         self.name = ''
         self.domain = 'kahoot.it'

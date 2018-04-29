@@ -4,11 +4,12 @@ import sys, time, random, string
 
 verif = False
 debuga = False
+pre = 'game'
 
 def main1(a):
     try:
         k = Kahoot.Kahoot(a, debug=debuga, verify=verif)
-        k.connect('mike')
+        k.connect()
         k.end()
     except Exception as e:
         print(e)
