@@ -1,4 +1,4 @@
-from kahoot import Kahoot, kahootQueue
+from Kahoot import Kahoot, kahootQueue
 import sys, time, random, string
 
 

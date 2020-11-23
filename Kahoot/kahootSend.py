@@ -1,5 +1,5 @@
 import requests, json, urllib.parse, time
-from kahoot import kahootReceive, kahootPayload, kahootError
+from Kahoot import kahootReceive, kahootPayload, kahootError
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 # import os, sys, inspect
 # cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"lib")))

@@ -1,4 +1,4 @@
-from kahoot import kahootError
+from Kahoot import kahootError
 import time, requests
 class Variables:
     def __init__(self, pin, **kwargs):
@@ -10,7 +10,7 @@ class Variables:
         self.debug = bool(self.debugLevel != 0)
         self.verify = bool(kwargs['verify']) if 'verify' in kwargs else True
         self.timeoutTime = float(kwargs['timeout']) if 'timeout' in kwargs else 2.0
-        self.isUser = bool(kwargs['isUser']) if 'isUser' in kwargs else True
+        self.isUser = bool(kwargs['isUser']) if 'isUser' in kwargs else False
         self.name = ''
         self.domain = 'kahoot.it'
         self.httpSession = requests.Session()

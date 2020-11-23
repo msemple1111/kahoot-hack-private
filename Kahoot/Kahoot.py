@@ -1,4 +1,4 @@
-from kahoot import kahootVariables, kahootQueue, kahootSend, kahootReceive
+from Kahoot import kahootVariables, kahootQueue, kahootSend, kahootReceive
 
 class Kahoot:
     def __init__(self, pin, **kwargs):

@@ -1,4 +1,4 @@
-from kahoot import kahootError
+from Kahoot import kahootError
 import json, base64, array
 class receive:
     def __init__(self, kahootPointer):

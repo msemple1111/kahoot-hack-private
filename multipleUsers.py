@@ -1,6 +1,8 @@
+import sys
+from Kahoot import kahootQueue, Kahoot
 class clients:
     def __init__(self, pin, **kwargs):
-        pre = 'mike' if 'pre' not in kwargs else str(kwargs['pre'])
+        pre = 'user' if 'pre' not in kwargs else str(kwargs['pre'])
         self.baseName = str(pre) if 'post' not in kwargs else (str(pre)+str(kwargs['post']))
         tSize = 30 if 'threadSize' not in kwargs else int(kwargs['threadSize'])
         self.numClient = 0 if 'startNumber' not in kwargs else int(kwargs['startNumber'])
@@ -36,4 +38,7 @@ class clients:
 def main():
     num = int(sys.argv[2])
     pin = int(sys.argv[1])
-    c = clients(pin, number=num, debug=2)
+    name = str(sys.argv[3])
+    c = clients(pin, number=num, pre=name, debug=2)
+
+main()
